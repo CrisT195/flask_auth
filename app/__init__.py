@@ -34,6 +34,10 @@ class RequestFormatter(logging.Formatter):
         if has_request_context():
             record.url = request.url
             record.remote_addr = request.remote_addr
+            record.request_method = request.method
+            record.request_path = request.path
+            record.ip = request.headers.get('X-Forwarded-For', request.remote_addr)
+            record.host = request.host.split(':', 1)[0]
         else:
             record.url = None
             record.remote_addr = None
@@ -79,7 +83,7 @@ def create_app():
     # Create a log file formatter object to create the entry in the log
     formatter = RequestFormatter(
         '[%(asctime)s] %(remote_addr)s requested %(url)s\n'
-        '%(levelname)s in %(module)s: %(message)s'
+        '%(levelname)s in %(module)s: %(message)s, %(request_method)s, %(request_path)s, %(ip)s, %(host)s'
     )
     # set the formatter for the log entry
     handler.setFormatter(formatter)
@@ -131,7 +135,7 @@ def create_app():
             parts.append(part)
         line = " ".join(parts)
         #this triggers a log entry to be created with whatever is in the line variable
-        app.logger.info('this is the plain message')
+        app.logger.info('plain message')
 
         return response
 
