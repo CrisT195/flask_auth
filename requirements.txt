@@ -48,5 +48,5 @@ rfc3339
 Faker
 python-dotenv
 sqlalchemy-serializer
-Flask-Mail
 Flask-CORS
+Flask-Mail
