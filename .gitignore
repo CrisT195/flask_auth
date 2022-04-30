@@ -6,4 +6,8 @@
 __pycache__
 .coverage
 .bash_history
+.env
 /app/logs
+logs
+uploads
+database
