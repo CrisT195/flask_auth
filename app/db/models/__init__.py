@@ -15,19 +15,27 @@ song_user = db.Table('song_user', db.Model.metadata,
 )
 
 
-class Song(db.Model,SerializerMixin):
+class Song(db.Model, SerializerMixin):
     __tablename__ = 'songs'
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(300), nullable=True, unique=False)
     artist = db.Column(db.String(300), nullable=True, unique=False)
+    year = db.Column(db.Integer, nullable=True, unique=False)
     genre = db.Column(db.String(300), nullable=True, unique=False)
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
     user = relationship("User", back_populates="songs", uselist=False)
 
-    def __init__(self, title, artist, genre):
+    def __init__(self, title, artist, year, genre):
         self.title = title
         self.artist = artist
+        self.year = year
         self.genre = genre
+
+    @staticmethod
+    def csv_headers():
+        """ returns tuple of CSV header """
+        csv_header = ('Title', 'Artist', 'Year', 'Genre')
+        return csv_header
 
 
 class User(UserMixin, db.Model):
