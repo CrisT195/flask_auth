@@ -29,9 +29,10 @@ def songs_browse(page):
 @songs.route('/songs/upload', methods=['POST', 'GET'])
 @login_required
 def songs_upload():
+    log = logging.getLogger("upload_songs")
     form = csv_upload()
     if form.validate_on_submit():
-        log = logging.getLogger("myApp")
+        # log = logging.getLogger("myApp")
 
         filename = secure_filename(form.file.data.filename)
         filepath = os.path.join(current_app.config['UPLOAD_FOLDER'], filename)
@@ -39,14 +40,24 @@ def songs_upload():
         #user = current_user
         list_of_songs = []
         with open(filepath) as file:
+            log.info("[%s] opened and parsing filepath:[%s]",
+                     current_user, filepath)
             csv_file = csv.DictReader(file)
+            csv_header = Song.csv_headers()
             for row in csv_file:
-                list_of_songs.append(Song(row['Name'],row['Artist'],row['Genre']))
+                title = row[csv_header[0]]
+                artist = row[csv_header[1]]
+                year = row[csv_header[2]]
+                genre = row[csv_header[3]]
+                list_of_songs.append(Song(title, artist, year, genre))
+                # list_of_songs.append(Song(row['Name'],row['Artist'],row['Genre']))
 
         current_user.songs = list_of_songs
         db.session.commit()
 
         return redirect(url_for('songs.songs_browse'))
+    else:
+        log.info("form failed validation")
 
     try:
         return render_template('upload.html', form=form)
