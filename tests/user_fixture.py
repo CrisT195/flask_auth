@@ -21,6 +21,7 @@ def add_db_user_fixture(application):
         yield user
 
         # delete user and verify
-        db.session.delete(user) # pylint: disable=no-member
-#        assert db.session.query(User).count() == 0 # pylint: disable=no-member
+#        db.session.delete(user) # pylint: disable=no-member
+        User.query.filter_by(email=TEST_EMAIL).delete()
+        assert db.session.query(User).count() == 0 # pylint: disable=no-member
 #        assert db.session.query(Song).count() == 0 # pylint: disable=no-member
