@@ -31,7 +31,7 @@ def after_request_logging(response):
 
     # log to request.log
     log = logging.getLogger("request")
-    log.info('Response status: {response.status}')
+    log.info('Response status: %s' % response.status)
 
     log = logging.getLogger("myApp")
     log.info("My App Logger")
@@ -180,6 +180,16 @@ LOGGING_CONFIG = {
             'level': 'DEBUG',
             'propagate': False
         },
+        'upload_songs': {  # if __name__ == '__main__'
+            'handlers': ['file.handler.upload_songs'],
+            'level': 'DEBUG',
+            'propagate': False
+        },
+        'misc_debug': {  # if __name__ == '__main__'
+            'handlers': ['file.handler.misc_debug'],
+            'level': 'DEBUG',
+            'propagate': False
+        }
 
     }
 }
