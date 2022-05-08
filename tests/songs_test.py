@@ -1,9 +1,16 @@
 """ test songs model/database """
 import os
 from app import db
-from app.db.models import Song
+from app.db.models import User, Song
 from app import config
 from tests.user_fixture import add_db_user_fixture  # pylint: disable=unused-import
+
+import logging
+from flask_login import login_user, login_required, logout_user, current_user
+import pytest
+from werkzeug.datastructures import FileStorage
+import flask_login
+from flask_wtf import csrf
 
 
 def test_adding_songs(application, add_db_user_fixture):
@@ -45,13 +52,13 @@ def test_adding_songs(application, add_db_user_fixture):
 #     if os.path.exists(upload_file):
 #         os.remove(upload_file)
 #
-#     with application.test_client(user) as client:  # user=user
+#     with application.test_client(user=user) as client:  # user=user
 #         with open(filepath, 'rb') as file:
 #             data = {
 #                 'file': (file, filename),
 #                 # 'csrf_token': current_
 #             }
-#             resp = client.post(root + '/songs/templates/upload.html', data=data)
+#             resp = client.post('songs/upload', data=data) # root + '/songs/templates/upload.html', data=data)
 #
 #     assert resp.status_code == 302
 #
@@ -80,11 +87,11 @@ def test_songs_upload_unauthorized(client):
     with open(filepath, 'rb') as file:
         data = {
             'file': (file, filename),
-            # 'csrf_token': current_
+            'csrf_token': csrf.generate_csrf()  # current_
         }
         resp = client.post('songs/upload',
                            follow_redirects=True, data=data)
 
     # should be redirected to login page
-    # assert resp.status_code == 200
-    # assert b'<h2>Login</h2>' in resp.data
+    assert resp.status_code == 200
+    assert b'<h2>Login</h2>' in resp.data

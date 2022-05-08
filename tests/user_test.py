@@ -12,7 +12,7 @@ def test_adding_user(application):
         assert db.session.query(Song).count() == 0
         # showing how to add a record
         # create a record
-        user = User('c@test.com', 'testtest')
+        user = User('cqwewq@test.com', 'testtest')
         # add it to get ready to be committed
         db.session.add(user)
         # call the commit
@@ -20,17 +20,17 @@ def test_adding_user(application):
         # assert that we now have a new user
         # assert db.session.query(User).count() == 1
         # finding one user record by email
-        user = User.query.filter_by(email='c@test.com').first()
+        user = User.query.filter_by(email='cqwewq@test.com').first()
         log.info(user)
         # asserting that the user retrieved is correct
-        assert user.email == 'c@test.com'
+        assert user.email == 'cqwewq@test.com'
         # this is how you get a related record ready for insert
-        user.songs = [Song("test", "smap", 1999, "jazz"), Song("test2", "te", 1998, "jazz")]
+        user.songs = [Song("test1", "smap", 1999, "jazz"), Song("test2", "te", 1998, "jazz")]
         # commit is what saves the songs
         db.session.commit()
         assert db.session.query(Song).count() == 2
-        song1 = Song.query.filter_by(title='test').first()
-        assert song1.title == "test"
+        song1 = Song.query.filter_by(title='test1').first()
+        assert song1.title == "test1"
         # changing the title of the song
         song1.title = "SuperSongTitle"
         # saving the new title of the song
@@ -38,6 +38,7 @@ def test_adding_user(application):
         song2 = Song.query.filter_by(title='SuperSongTitle').first()
         assert song2.title == "SuperSongTitle"
         # checking cascade delete
-        db.session.delete(user)
-        # assert db.session.query(User).count() == 0
-        # assert db.session.query(Song).count() == 0
+#        db.session.delete(user)
+        User.query.filter_by(email='cqwewq@test.com').delete()
+        assert db.session.query(User).count() == 0
+        assert db.session.query(Song).count() == 2
